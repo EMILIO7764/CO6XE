@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO6XE - Estación de Radioaficionado | Sancti Spíritus, Cuba</title>
+    <style>
+        /* ============================================
+           VARIABLES Y RESET
+           ============================================ */
+        :root {
+            --primary: #0a1929;
+            --secondary: #1a3a5c;
+            --accent: #ff6b35;
+            --accent-hover: #e55a2b;
+            --gold: #d4af37;
+            --light: #f8f9fa;
+            --dark: #0d1b2a;
+            --gray: #6c757d;
+            --success: #28a745;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.25);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #0a1929 0%, #1a3a5c 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           HEADER PRINCIPAL
+           ============================================ */
+        header {
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        .callsign-banner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .callsign {
+            font-size: 6.5rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.7);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .location {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 0.6rem 1.4rem;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 107, 53, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            display: block;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+
+        /* ============================================
+           CONTENEDOR PRINCIPAL
+           ============================================ */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.8rem;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================
+           TARJETAS DE CONTENIDO
+           ============================================ */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.8rem;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            color: white;
+            padding: 1.1rem 1.5rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .card-header::before {
+            content: "📡";
+            font-size: 1.3rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* ============================================
+           SECCIÓN DE UBICACIÓN
+           ============================================ */
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .location-item {
+            text-align: center;
+            padding: 0.8rem;
+            background: var(--light);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .location-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .location-value {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* ============================================
+           BIOGRAFÍA Y EQUIPO
+           ============================================ */
+        .bio-text {
+            margin-bottom: 1.3rem;
+            text-align: justify;
+        }
+
+        .bio-text strong {
+            color: var(--secondary);
+        }
+
+        .equipment-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .equipment-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+        }
+
+        .equipment-list li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.4rem;
+            line-height: 0.8;
+        }
+
+        .equipment-list strong {
+            color: var(--secondary);
+            min-width: 140px;
+            display: inline-block;
+        }
+
+        /* ============================================
+           SECCIÓN QSL
+           ============================================ */
+        .qsl-section {
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border-left: 5px solid var(--gold);
+            padding: 1.2rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin: 1.2rem 0;
+        }
+
+        .qsl-section h4 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .qsl-section h4::before {
+            content: "✉️";
+        }
+
+        .qsl-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .qsl-btn {
+            display: inline-block;
+            padding: 0.6rem 1.3rem;
+            background: var(--secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: var(--transition);
+            border: 2px solid var(--secondary);
+        }
+
+        .qsl-btn:hover {
+            background: transparent;
+            color: var(--secondary);
+            transform: scale(1.03);
+        }
+
+        .qsl-btn.accent {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .qsl-btn.accent:hover {
+            color: var(--accent);
+        }
+
+        /* ============================================
+           TABLA DE LOGS
+           ============================================ */
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .log-table th {
+            background: var(--secondary);
+            color: white;
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .log-table td {
+            padding: 0.7rem 0.8rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .log-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .log-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .band-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .mode-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: var(--secondary);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* ============================================
+           PREMIOS Y AWARDS
+           ============================================ */
+        .awards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .award-card {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--gold);
+            transition: var(--transition);
+        }
+
+        .award-card:hover {
+            background: #fff9e6;
+            transform: translateX(4px);
+        }
+
+        .award-title {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        .award-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        .award-endorsements {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        /* ============================================
+           AMIGOS Y GRUPOS
+           ============================================ */
+        .friends-list, .groups-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+
+        .friend-tag, .group-tag {
+            padding: 0.4rem 0.9rem;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: default;
+        }
+
+        .friend-tag:hover, .group-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* ============================================
+           CITA INSPIRADORA
+           ============================================ */
+        .quote-section {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-section::before {
+            content: """;
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 10rem;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .quote-author {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--gold);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            background: var(--dark);
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            padding: 1.8rem 2rem;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        footer a:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+
+        .footer-signature {
+            margin-top: 0.8rem;
+            font-style: italic;
+            color: var(--gold);
+        }
+
+        /* ============================================
+           UTILIDADES Y ANIMACIONES
+           ============================================ */
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            color: var(--secondary);
+            padding-bottom: 0.6rem;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .section-title::before {
+            content: "";
+            width: 6px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(255,107,53,0.15), transparent);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gray), transparent);
+            margin: 1.8rem 0;
+            border: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            background: rgba(40, 167, 69, 0.15);
+            color: var(--success);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .status-badge::before {
+            content: "●";
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Animación de entrada para las tarjetas */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: fadeInUp 0.5s ease forwards;
+            animation-delay: calc(var(--i, 0) * 0.1s);
+        }
+
+        /* Responsive adicional */
+        @media (max-width: 600px) {
+            .callsign {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+            
+            .stats-bar {
+                gap: 1rem;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .card-body {
+                padding: 1.2rem;
+            }
+            
+            .log-table {
+                font-size: 0.8rem;
+            }
+            
+            .log-table th,
+            .log-table td {
+                padding: 0.5rem 0.4rem;
+            }
+        }
+
+        /* Efecto de onda en el header */
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158.5,30.08,35.62-1.35,70.89-9.63,104.39-23.21,33.5-13.58,65.21-33.33,93.89-57.48,28.68-24.15,54.39-52.13,76.39-82.34,22-30.21,39.39-63.67,52.39-98.33,13-34.66,21.39-70.53,25.39-106.6,4-36.07,3.39-72.34-1.39-108.81-4.78-36.47-14.39-72.14-28.39-106.4-14-34.26-32.39-66.33-54.39-95.2-22-28.87-48.39-54.54-78.39-76-30-21.46-63.39-38.13-98.39-49.2-35-11.07-71.39-16.34-107.39-15.4-36,0.94-71.39,7.41-104.39,19.48-33,12.07-63.39,29.74-89.39,52.41-26,22.67-47.39,50.14-63.39,80.41-16,30.27-26.39,63.14-30.39,96.81-4,33.67-1.39,67.54,7.39,100.61,8.78,33.07,23.39,64.34,42.39,92.81,19,28.47,43.39,53.34,71.39,73.61,28,20.27,60.39,35.14,94.39,43.81,34,8.67,69.39,11.14,104.39,7.41,35-3.73,68.39-13.2,98.39-27.67,30-14.47,56.39-33.74,78.39-56.81,22-23.07,39.39-49.54,51.39-78.21,12-28.67,18.39-59.34,18.39-90.41,0-31.07-6.39-61.54-18.39-90.21-12-28.67-29.39-54.94-51.39-77.81-22-22.87-48.39-41.34-78.39-54.41-30-13.07-62.39-20.34-95.39-21.41-33-1.07-65.39,4.2-95.39,15.47-30,11.27-56.39,28.14-78.39,49.41-22,21.27-39.39,46.14-51.39,73.21-12,27.07-18.39,56.14-18.39,85.61,0,29.47,6.39,58.34,18.39,85.41,12,27.07,29.39,51.54,51.39,72.41,22,20.87,48.39,37.34,78.39,48.21,30,10.87,62.39,15.94,94.39,14.81,32-1.13,63.39-8.4,92.39-21.27,29-12.87,54.39-31.14,74.39-53.61,20-22.47,34.39-48.74,42.39-76.61,8-27.87,9.39-57.14,4.39-85.81-5-28.67-16.39-55.54-33.39-79.41-17-23.87-39.39-43.74-65.39-58.41-26-14.67-55.39-23.54-85.39-26.01-30-2.47-60.39,1.4-88.39,11.47-28,10.07-53.39,25.74-74.39,45.81-21,20.07-37.39,44.14-48.39,70.41-11,26.27-16.39,54.34-15.39,82.61,1,28.27,8.39,55.74,21.39,80.81,13,25.07,31.39,47.14,53.39,64.81,22,17.67,48.39,30.34,76.39,37.01,28,6.67,57.39,7.34,85.39,2.01,28-5.33,54.39-16.4,77.39-32.47,23-16.07,41.39-36.74,54.39-60.41,13-23.67,20.39-49.94,21.39-76.81,1-26.87-4.39-53.54-15.39-78.41-11-24.87-27.39-47.14-47.39-65.61-20-18.47-44.39-32.34-70.39-40.81-26-8.47-53.39-11.34-80.39-8.41-27,2.93-52.39,11.6-74.39,25.27-22,13.67-39.39,31.74-51.39,52.61-12,20.87-18.39,44.34-18.39,68.21,0,23.87,6.39,47.14,18.39,68.01,12,20.87,29.39,38.54,50.39,51.81,21,13.27,45.39,21.54,70.39,24.01,25,2.47,50.39-0.8,73.39-9.47,23-8.67,43.39-22.14,59.39-39.21,16-17.07,27.39-37.34,33.39-59.21,6-21.87,6.39-44.94,1.39-67.41-5-22.47-15.39-43.14-30.39-60.81-15-17.67-34.39-31.34-56.39-40.01-22-8.67-45.39-12.14-68.39-10.21-23,1.93-44.39,9.4-62.39,21.67-18,12.27-31.39,28.74-39.39,47.61-8,18.87-10.39,39.54-7.39,59.61,3,20.07,11.39,38.74,24.39,54.41,13,15.67,30.39,27.54,50.39,34.41,20,6.87,41.39,8.54,62.39,4.81,21-3.73,40.39-12.8,56.39-26.27,16-13.47,27.39-30.74,33.39-50.01,6-19.27,6.39-39.74,1.39-59.41-5-19.67-15.39-37.54-30.39-52.41-15-14.87-34.39-25.54-55.39-31.01-21-5.47-43.39-5.54-64.39-0.41-21,5.13-39.39,15.6-53.39,30.47-14,14.87-23.39,33.34-27.39,53.21-4,19.87-2.39,40.54,4.39,59.61,6.78,19.07,18.39,35.74,33.39,48.81,15,13.07,33.39,22.14,53.39,26.41,20,4.27,40.39,3.54,59.39-2.19,19-5.73,35.39-16.2,48.39-30.47,13-14.27,21.39-31.74,24.39-50.41,3-18.67,0.39-37.94-7.39-55.61-7.78-17.67-20.39-32.74-36.39-43.81-16-11.07-34.39-17.74-53.39-19.41-19-1.67-38.39,1.4-55.39,8.87-17,7.47-31.39,19.14-41.39,33.61-10,14.47-15.39,31.54-15.39,49.01,0,17.47,5.39,34.34,15.39,48.81,10,14.47,24.39,25.74,41.39,32.61,17,6.87,35.39,9.14,53.39,6.61,18-2.53,34.39-10.2,47.39-22.07,13-11.87,21.39-27.34,24.39-44.21,3-16.87,0.39-34.14-7.39-49.61-7.78-15.47-20.39-27.94-36.39-36.21-16-8.27-34.39-12.14-52.39-11.21-18,0.93-34.39,6.6-47.39,16.47-13,9.87-21.39,23.54-24.39,38.81-3,15.27-0.39,31.14,7.39,45.41,7.78,14.27,20.39,25.34,36.39,32.01,16,6.67,33.39,8.74,50.39,6.01,17-2.73,32.39-10.6,44.39-22.87,12-12.27,19.39-27.94,21.39-44.81,2-16.87-1.39-34.14-9.39-49.61-8-15.47-20.39-27.94-36.39-36.21-16-8.27-34.39-11.74-52.39-10.21-18,1.53-34.39,7.8-47.39,18.07-13,10.27-21.39,24.34-24.39,40.41-3,16.07-0.39,32.74,7.39,47.81,7.78,15.07,20.39,26.94,36.39,34.41,16,7.47,33.39,10.34,50.39,8.41,17-1.93,32.39-8.4,44.39-18.87,12-10.47,19.39-24.34,21.39-39.41,2-15.07-1.39-30.54-9.39-44.41-8-13.87-20.39-24.54-36.39-31.01-16-6.47-34.39-8.54-52.39-6.01-18,2.53-34.39,9.8-47.39,21.07-13,11.27-21.39,26.14-24.39,42.41-3,16.27-0.39,33.14,7.39,48.61,7.78,15.47,20.39,27.74,36.39,35.61,16,7.87,33.39,11.14,50.39,9.61,17-1.53,32.39-7.6,44.39-17.47,12-9.87,19.39-23.14,21.39-37.61,2-14.47-1.39-29.34-9.39-42.41-8-13.07-20.39-23.14-36.39-29.01-16-5.87-34.39-7.34-52.39-4.21-18,3.13-34.39,10.8-47.39,22.07-13,11.27-21.39,25.94-24.39,42.01-3,16.07-0.39,32.54,7.39,47.41,7.78,14.87,20.39,26.54,36.39,33.81,16,7.27,33.39,9.94,50.39,7.81,17-2.13,32.39-8.8,44.39-19.27,12-10.47,19.39-24.54,21.39-39.81,2-15.27-1.39-30.94-9.39-44.81-8-13.87-20.39-24.34-36.39-30.61-16-6.27-34.39-7.94-52.39-5.01-18,2.93-34.39,10.4-47.39,21.47-13,11.07-21.39,25.54-24.39,41.41-3,15.87-0.39,32.14,7.39,46.81,7.78,14.67,20.39,26.14,36.39,33.21,16,7.07,33.39,9.54,50.39,7.21,17-2.33,32.39-9.2,44.39-19.87,12-10.67,19.39-24.94,21.39-40.41,2-15.47-1.39-31.34-9.39-45.61-8-14.27-20.39-25.14-36.39-31.81-16-6.67-34.39-8.54-52.39-5.81-18,2.73-34.39,10.2-47.39,21.67-13,11.47-21.39,26.34-24.39,42.61-3,16.27-0.39,32.94,7.39,48.01,7.78,15.07,20.39,26.74,36.39,34.21,16,7.47,33.39,10.14,50.39,7.61,17-2.53,32.39-9.6,44.39-20.47,12-10.87,19.39-25.34,21.39-41.01,2-15.67-1.39-31.74-9.39-46.21-8-14.47-20.39-25.54-36.39-32.41-16-6.87-34.39-8.94-52.39-6.41-18,2.53-34.39,9.8-47.39,21.07-13,11.27-21.39,26.14-24.39,42.41-3,16.27-0.39,32.94,7.39,48.01,7.78,15.07,20.39,26.74,36.39,34.21,16,7.47,33.39,10.14,50.39,7.61,17-2.53,32.39-9.6,44.39-20.47,12-10.87,19.39-25.34,21.39-41.01,2-15.67-1.39-31.74-9.39-46.21-8-14.47-20.39-25.54-36.39-32.41-16-6.87-34.39-8.94-52.39-6.41-18,2.53-34.39,9.8-47.39,21.07-13,11.27-21.39,26.14-24.39,42.41z" fill="%231a3a5c" opacity="0.3"/></svg>') no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER PRINCIPAL -->
+    <header>
+        <div class="callsign-banner">
+            <div class="callsign">CO6XE</div>
+            <div class="location">🇨🇺 Sancti Spíritus, Cuba</div>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">QSL</span>
+                    <span class="stat-value">Direct / OQRS / QRZ / LoTW / eQSL</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Lookups</span>
+                    <span class="stat-value">234,963+</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Member Since</span>
+                    <span class="stat-value">Julio 1997</span>
+                </div>
+            </div>
+            <div class="status-badge">Activo en HF-VHF • CW • SSB • Digital</div>
+            <div class="status-badge">Band HF 80,55,40,30,20,15,12,10 meter and VHF 2 meter</div>
+            <div class="status-badge">BBS 144.910 Mhz CO6XE-1</div>
+        </div>
+        <div class="wave"></div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container">
+        <!-- COLUMNA IZQUIERDA - CONTENIDO PRINCIPAL -->
+        <main>
+            <!-- UBICACIÓN Y DATOS TÉCNICOS -->
+            <article class="card" style="--i:1">
+                <div class="card-header">📍 Datos de Ubicación</div>
+                <div class="card-body">
+                    <div class="location-grid">
+                        <div class="location-item">
+                            <span class="location-label">Zona CQ</span>
+                            <span class="location-value">08</span>
+                        </div>
+                        <div class="location-item">
+                            <span class="location-label">Zona ITU</span>
+                            <span class="location-value">11</span>
+                        </div>
+                        <div class="location-item">
+                            <span class="location-label">IOTA</span>
+                            <span class="location-value">NA-015</span>
+                        </div>
+                        <div class="location-item">
+                            <span class="location-label">Locator</span>
+                            <span class="location-value">FL01gw</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- BIOGRAFÍA Y EQUIPO -->
+            <article class="card" style="--i:2">
+                <div class="card-header">👨‍🔧 Sobre Mí y Mi Estación</div>
+                <div class="card-body">
+                    <p class="bio-text">
+                        <strong>¡Hola!</strong> Mi nombre es <strong>Emilio Rafael</strong> y opero desde la ciudad de 
+                        <strong>Sancti Spíritus, Cuba</strong>. Soy radioaficionado desde <span class="highlight">1997</span>, 
+                        trabajando estaciones en <strong>CW, SSB y Digimodos</strong>. Soy Ingeniero en 
+                        Radiocomunicaciones desde 1986 y poseo un Máster en comunicaciones.
+                    </p>
+                    <p class="bio-text">
+                        Mi pasión por la radio me lleva a experimentar constantemente con 
+                        <strong>antenas para HF, Modos Digitales, APP para Dispositivos Inalambricos</strong>. También soy amante de la naturaleza, por lo que 
+                        participo regularmente en actividades <span class="highlight">SOTA, POTA, BOTA, IOTA e ILLW</span>.
+                    </p>
+                    
+                    <h4 class="section-title">⚙️ Configuración de Mi Estación</h4>
+                    <ul class="equipment-list">
+                        <li><strong>Transceptores:</strong> Yaesu FT-80C (20W), Kenwood TK-760G, ICOM ICF-320</li>
+                        <li><strong>Sintonizador:</strong> Kenwood AT-130 y MFJ-941C</li>
+                        <li><strong>Antenas:</strong> BBTD (40-10M), ULTIMAX HW-EndFed (80-10M), Yagi y Ringo 2M</li>
+                        <li><strong>Amplificador:</strong> 350W con 4 válvulas GU-50</li>
+                        <li><strong>PBBS:</strong> Kantronics KPC-3 en 144.910 MHz (CO6XE-1)</li>
+                    </ul>
+                </div>
+            </article>
+
+            <!-- INFORMACIÓN QSL -->
+            <article class="card" style="--i:3">
+                <div class="card-header">✉️ Información QSL</div>
+                <div class="card-body">
+                    <div class="qsl-section">
+                        <h4>Confirmación de Contactos</h4>
+                        <p>Confirmo todos los contactos y los subo a <strong>QRZ, eQSL y LoTW</strong> generalmente una vez por semana.</p>
+                        <div class="qsl-links">
+                            <a href="#" class="qsl-btn accent">📧 Solicitar QSL Directo</a>
+                            <a href="#" class="qsl-btn">🔍 Club Log OQRS</a>
+                            <a href="#" class="qsl-btn">📊 LoTW</a>
+                        </div>
+                    </div>
+                    
+                    <hr class="divider">
+                    
+                    <h4 class="section-title">📋 Últimos 10 QSO</h4>
+                    <table class="log-table">
+                        <thead>
+                            <tr>
+                                <th>CALL</th>
+                                <th>DXCC</th>
+                                <th>FECHA</th>
+                                <th>BANDA</th>
+                                <th>MODO</th>
+                                <th>RST</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CE4FOQ</td>
+                                <td>Chile</td>
+                                <td>2026-03-29</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-11/-07</td>
+                            </tr>
+                            <tr>
+                                <td>9Y4DG</td>
+                                <td>Trinidad</td>
+                                <td>2026-03-29</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-14/-02</td>
+                            </tr>
+                            <tr>
+                                <td>LU2FWK</td>
+                                <td>Argentina</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-03/-04</td>
+                            </tr>
+                            <tr>
+                                <td>HP2DFA</td>
+                                <td>Panamá</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-14/-14</td>
+                            </tr>
+                            <tr>
+                                <td>LU5AMI</td>
+                                <td>Argentina</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-08/-17</td>
+                            </tr>
+                            <tr>
+                                <td>HP1RY</td>
+                                <td>Panamá</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>+01/-01</td>
+                            </tr>
+                            <tr>
+                                <td>KC1CUV</td>
+                                <td>USA</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-16/-13</td>
+                            </tr>
+                            <tr>
+                                <td>N1NRL</td>
+                                <td>USA</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-09/-18</td>
+                            </tr>
+                            <tr>
+                                <td>PA3R</td>
+                                <td>Países Bajos</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-09/-12</td>
+                            </tr>
+                            <tr>
+                                <td>KD4BJW</td>
+                                <td>USA</td>
+                                <td>2026-03-28</td>
+                                <td><span class="band-tag">15M</span></td>
+                                <td><span class="mode-tag">FT8</span></td>
+                                <td>-11/-04</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <!-- CITA INSPIRADORA -->
+            <section class="quote-section">
+                <p class="quote-text">
+                    "La radio tiene un mundo por delante, explorando lo nuevo, dando un toque de misterio y magia 
+                    que nos atrapa tanto, nos permite interactuar con todos los que habitamos este planeta, 
+                    acompañándonos en tantos momentos de silencio. Su compañía es eterna, aunque ni siquiera nos demos cuenta."
+                </p>
+                <span class="quote-author">— Emilio Rafael, CO6XE</span>
+            </section>
+        </main>
+
+        <!-- COLUMNA DERECHA - SIDEBAR -->
+        <aside>
+            <!-- PREMIOS -->
+            <article class="card" style="--i:4">
+                <div class="card-header">🏆 Awards Destacados</div>
+                <div class="card-body">
+                    <div class="awards-grid">
+                        <div class="award-card">
+                            <div class="award-title">Master of Radio Communication - Oceania</div>
+                            <span class="award-date">Concedido: 2023-08-09</span>
+                            <span class="award-endorsements">• Mixed Digital</span>
+                        </div>
+                        <div class="award-card">
+                            <div class="award-title">30 Years of QRZ</div>
+                            <span class="award-date">Concedido: 2023-04-26</span>
+                            <span class="award-endorsements">• 5 Band Mixed</span>
+                        </div>
+                        <div class="award-card">
+                            <div class="award-title">DX World Award</div>
+                            <span class="award-date">Concedido: 2020-11-03</span>
+                            <span class="award-endorsements">• 5 Band Mixed • 40M Digital</span>
+                        </div>
+                        <div class="award-card">
+                            <div class="award-title">World Continents Award</div>
+                            <span class="award-date">Concedido: 2020-09-17</span>
+                            <span class="award-endorsements">• 5 Band Mixed • Digital</span>
+                        </div>
+                    </div>
+                    <p style="margin-top:1rem; font-size:0.9rem; color:var(--gray);">
+                        <strong>18 awards</strong> en total • <a href="#" style="color:var(--accent); text-decoration:none;">Ver todos →</a>
+                    </p>
+                </div>
+            </article>
+
+            <!-- AMIGOS DE RADIO -->
+            <article class="card" style="--i:5">
+                <div class="card-header">🤝 Amigos de Radio</div>
+                <div class="card-body">
+                    <div class="friends-list">
+                        <span class="friend-tag">K0RRD</span>
+                        <span class="friend-tag">CO6SE</span>
+                        <span class="friend-tag">CM6WYZ</span>
+                        <span class="friend-tag">CO6HZ</span>
+                        <span class="friend-tag">CO6OZ</span>
+                        <span class="friend-tag">CO6OO</span>
+                        <span class="friend-tag">CO6RD</span>
+                        <span class="friend-tag">CM6JVR</span>
+                        <span class="friend-tag">OA4ENG</span>
+                        <span class="friend-tag">CO6JEN</span>
+                        <span class="friend-tag">CO6JI</span>
+                        <span class="friend-tag">CL6KDJ</span>
+                        <span class="friend-tag">EA5JJN</span>
+                        <span class="friend-tag">EA4IPN</span>
+                        <span class="friend-tag">CO6FD</span>
+                        <span class="friend-tag">CL6CAN</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- GRUPOS DE ACTIVIDAD -->
+            <article class="card" style="--i:6">
+                <div class="card-header">🌐 Grupos de Actividad</div>
+                <div class="card-body">
+                    <p style="margin-bottom:1rem; font-size:0.95rem;">
+                        Me encanta participar en estos grupos internacionales:
+                    </p>
+                    <div class="groups-list">
+                        <span class="group-tag">European ROS Club</span>
+                        <span class="group-tag">Croatian Digital Group</span>
+                        <span class="group-tag">Feld Hell Club</span>
+                        <span class="group-tag">30 Meter Digital Group</span>
+                        <span class="group-tag">Belarus Activity Group</span>
+                        <span class="group-tag">Belgium SSTV Club</span>
+                        <span class="group-tag">FT8 Digital Mode Club</span>
+                        <span class="group-tag">Natal Digital Group</span>
+                        <span class="group-tag">European PSK Club</span>
+                        <span class="group-tag">Russian Digital Radio Club</span>
+                        <span class="group-tag">TADMC Digital Mode Club</span>
+                        <span class="group-tag">YB6DX Community</span>
+                        <span class="group-tag">NA QRP CW Club</span>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ESTADÍSTICAS RÁPIDAS -->
+            <article class="card" style="--i:7">
+                <div class="card-header">📊 Estadísticas</div>
+                <div class="card-body">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:center;">
+                        <div style="padding:1rem; background:var(--light); border-radius:8px;">
+                            <div style="font-size:1.8rem; font-weight:700; color:var(--accent);">212</div>
+                            <div style="font-size:0.9rem; color:var(--gray);">QSOs Trabajados</div>
+                        </div>
+                        <div style="padding:1rem; background:var(--light); border-radius:8px;">
+                            <div style="font-size:1.8rem; font-weight:700; color:var(--success);">212</div>
+                            <div style="font-size:0.9rem; color:var(--gray);">QSLs Confirmados</div>
+                        </div>
+                    </div>
+                    <p style="margin-top:1rem; font-size:0.9rem; color:var(--gray); text-align:center;">
+                        🔹 100% Tasa de Confirmación<br>
+                        🔹 Actualización semanal
+                    </p>
+                </div>
+            </article>
+        </aside>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>
+            <strong>CO6XE</strong> • Estación de Radioaficionado • Sancti Spíritus, Cuba 🇨🇺<br>
+            <span style="opacity:0.8;">Operando en HF • CW • SSB • FT8 • JT65 • PSK31</span>
+        </p>
+        <p class="footer-signature">73's de Emilio • "La radio une al mundo"</p>
+        <p style="margin-top:1rem; font-size:0.85rem; opacity:0.7;">
+            Página diseñada con ❤️ usando solo HTML5 y CSS3 • Sin JavaScript • Última actualización: Noviembre 2026
+        </p>
+    </footer>
+</body>
+</html>
